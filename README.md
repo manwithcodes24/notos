@@ -49,7 +49,7 @@ Studying should be collaborative, not competitive. Noto empowers students to hel
 We welcome contributions! Please fork the repo and submit a pull request.
 
 ```bash
-git clone https://github.com/yourusername/noto.git
+git clone https://github.com/yash24shukla/noto.git
 cd noto
 npm install
 npm run dev
