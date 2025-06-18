@@ -2,11 +2,11 @@ package routes
 
 import (
 	"notos/controllers"
+
 	"github.com/gin-gonic/gin"
 )
 
-
-func SubjectRoutes (incomingRoutes *gin.Engine) {
+func SubjectRoutes(incomingRoutes *gin.Engine) {
 	incomingRoutes.GET("/subjects", controllers.GetSubjects)
 	incomingRoutes.GET("/subject/:subjectId", controllers.GetSubjectById)
 	incomingRoutes.POST("/subjects", controllers.CreateSubject)

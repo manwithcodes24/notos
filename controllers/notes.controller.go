@@ -6,20 +6,21 @@ import (
 	"time"
 
 	"net/http"
-	"notos/database"
-	"notos/models"
-	"gopkg.in/bluesuncorp/validator.v5"
+	"notos/internal/database"
+	"notos/internal/models"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"gopkg.in/bluesuncorp/validator.v5"
 )
 
 // collection variables
 var (
 	NotesCollection    *mongo.Collection = database.OpenCollection(database.Client, "notes")
 	SubjectsCollection *mongo.Collection = database.OpenCollection(database.Client, "subjects")
-	validate = validator.New("validate", validator.BakedInValidators)
+	validate                             = validator.New("validate", validator.BakedInValidators)
 )
 
 func GetNotes(c *gin.Context) {
@@ -123,7 +124,7 @@ func UpdateNotes(c *gin.Context) {
 }
 
 func DeleteNotes(c *gin.Context) {
-	noteId,err := primitive.ObjectIDFromHex(c.Param("noteId"))
+	noteId, err := primitive.ObjectIDFromHex(c.Param("noteId"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while parsing noteId"})
 		return

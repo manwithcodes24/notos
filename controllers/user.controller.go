@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	// "notos/database"
-	// "notos/models"
+	// "notos/internal/database"
+	// "notos/internal/models"
 	"fmt"
 	"log"
 

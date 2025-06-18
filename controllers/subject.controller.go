@@ -4,16 +4,13 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"notos/models"
+	"notos/internal/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
 )
-
-
 
 func GetSubjects(c *gin.Context) {
 	var Subjects []models.Subject
@@ -120,4 +117,3 @@ func DeleteSubject(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Subject deleted successfully"})
 }
-

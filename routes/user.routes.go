@@ -1,7 +1,8 @@
 package routes
 
 import (
-	"notos/controllers"
+	"notos/internal/controllers"
+
 	"github.com/gin-gonic/gin"
 )
 
