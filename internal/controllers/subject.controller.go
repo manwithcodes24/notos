@@ -51,13 +51,13 @@ func CreateSubject(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 	if err := c.BindJSON(&subject); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while binding JSON"})
 		return
 	}
 	valErr := validate.Struct(subject)
 	if valErr != nil {
-		log.Fatal(valErr)
+		log.Println(valErr)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while validating JSON"})
 		return
 	}
@@ -66,7 +66,7 @@ func CreateSubject(c *gin.Context) {
 	subject.ID = primitive.NewObjectID()
 	_, err := SubjectsCollection.InsertOne(ctx, subject)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while inserting subject"})
 		return
 	}
@@ -83,13 +83,13 @@ func UpdateSubject(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 	if err := c.BindJSON(&subject); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while binding JSON"})
 		return
 	}
 	valErr := validate.Struct(subject)
 	if valErr != nil {
-		log.Fatal(valErr)
+		log.Println(valErr)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while validating JSON"})
 		return
 	}

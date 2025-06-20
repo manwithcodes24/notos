@@ -10,16 +10,17 @@ import (
 	"notos/internal/database"
 	"notos/internal/models"
 	"time"
-
+    "go.mongodb.org/mongo-driver/mongo"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	UsersCollection *mongo.Collection = database.OpenCollection(database.Client, "users")
 )
+
+
 
 func GetUsers(c *gin.Context) {
 
@@ -30,10 +31,9 @@ func GetUsers(c *gin.Context) {
 
 func Signup(c *gin.Context) {
 	var user models.User
-	err := c.BindJSON(&user)
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
-	if err != nil {
+	if err := c.BindJSON(&user); err != nil {
 		log.Fatal(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to bind user data",
@@ -44,22 +44,24 @@ func Signup(c *gin.Context) {
 	user.Password = HashPassword(user.Password)
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	err = validate.Struct(user)
-	if err != nil {
+	user.TotalNotes = 0
+	if err := validate.Struct(user); err != nil {
 		log.Fatal(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	_, err = UsersCollection.InsertOne(ctx, user)
-	if err != nil {
+	if _, err := UsersCollection.InsertOne(ctx, user); err != nil {
 		log.Fatal(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Error Occured while creating the user",
 		})
 		return
 	}
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "User created successfully",
+	})
 }
 
 func Login(c *gin.Context) {

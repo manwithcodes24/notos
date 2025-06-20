@@ -1,30 +1,31 @@
 package helper
 
 import (
-	"time"
+	"fmt"
+	"log"
 	"notos/internal/models"
 	"os"
-	"log"
-	"fmt"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func GenerateTokens(user models.User) (string, string, error) {
 	secret := os.Getenv("JWT_SECRET")
 	accessClaims := jwt.MapClaims{
-		"id": user.ID,
-		"email": user.Email,
+		"id":       user.ID,
+		"email":    user.Email,
 		"username": user.Username,
-		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"iat":      time.Now().Unix(),
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
 	}
 	refreshClaims := jwt.MapClaims{
-		"id": user.ID,
+		"id":  user.ID,
 		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(),
 	}
 	accessToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims).SignedString([]byte(secret))
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return "", "", err
 	}
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString([]byte(secret))

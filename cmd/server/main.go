@@ -5,6 +5,7 @@ import (
 	"notos/internal/middlewares"
 	"notos/internal/routes"
 	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -12,7 +13,7 @@ import (
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
 	port := os.Getenv("PORT")
 	if port == "" {

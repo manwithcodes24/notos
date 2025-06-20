@@ -67,13 +67,13 @@ func UploadNotes(c *gin.Context) {
 	var Note models.Note
 	var Subject models.Subject
 	if err := c.BindJSON(&Note); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while binding JSON"})
 		return
 	}
 	valErr := validate.Struct(Note)
 	if valErr != nil {
-		log.Fatal(valErr)
+		log.Println(valErr)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while validating JSON"})
 		return
 	}
@@ -87,7 +87,7 @@ func UploadNotes(c *gin.Context) {
 	Note.ID = primitive.NewObjectID()
 	_, err = NotesCollection.InsertOne(ctx, Note)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while inserting note"})
 		return
 	}
@@ -105,13 +105,13 @@ func UpdateNotes(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
 	if err := c.BindJSON(&Note); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while binding JSON"})
 		return
 	}
 	valErr := validate.Struct(Note)
 	if valErr != nil {
-		log.Fatal(valErr)
+		log.Println(valErr)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while validating JSON"})
 		return
 	}

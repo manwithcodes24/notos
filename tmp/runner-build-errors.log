@@ -1,0 +1,4 @@
+# notos/cmd/server
+cmd\server\main.go:29:2: not enough arguments in call to database.CreateUserIndexes
+	have ()
+	want (*mongo.Collection)
