@@ -1,9 +1,12 @@
 package models
 
 import (
+	"context"
 	"time"
-
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type User struct {
@@ -17,4 +20,23 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt" bson:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt" bson:"updatedAt"`
 	
+}
+func CreateUserIndexes(collection *mongo.Collection) error {
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    // Email index
+    emailIndex := mongo.IndexModel{
+        Keys: bson.M{"email": 1},
+        Options: options.Index().SetUnique(true),
+    }
+
+    // Username index
+    usernameIndex := mongo.IndexModel{
+        Keys: bson.M{"username": 1},
+        Options: options.Index().SetUnique(true),
+    }
+
+    _, err := collection.Indexes().CreateMany(ctx, []mongo.IndexModel{emailIndex, usernameIndex})
+    return err
 }

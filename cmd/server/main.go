@@ -2,10 +2,8 @@ package main
 
 import (
 	"log"
-	"notos/internal/middlewares"
 	"notos/internal/routes"
 	"os"
-
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -27,7 +25,6 @@ func main() {
 	})
 	router.Use(gin.Logger())
 	routes.UserRoutes(router)
-	router.Use(middlewares.Authentication())
 	routes.NotesRoutes(router)
 	routes.SubjectRoutes(router)
 	routes.InteractionRoutes(router)

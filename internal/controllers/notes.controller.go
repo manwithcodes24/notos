@@ -6,22 +6,17 @@ import (
 	"time"
 
 	"net/http"
-	"notos/internal/database"
 	"notos/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"gopkg.in/bluesuncorp/validator.v5"
+	
+	
 )
 
 // collection variables
-var (
-	NotesCollection    *mongo.Collection = database.OpenCollection(database.Client, "notes")
-	SubjectsCollection *mongo.Collection = database.OpenCollection(database.Client, "subjects")
-	validate                             = validator.New("validate", validator.BakedInValidators)
-)
+
 
 func GetNotes(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)

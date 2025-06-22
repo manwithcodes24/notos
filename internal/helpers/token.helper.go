@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import (
 	"fmt"
@@ -8,9 +8,14 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
 )
 
 func GenerateTokens(user models.User) (string, string, error) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
 	secret := os.Getenv("JWT_SECRET")
 	accessClaims := jwt.MapClaims{
 		"id":       user.ID,
@@ -36,6 +41,10 @@ func GenerateTokens(user models.User) (string, string, error) {
 }
 
 func ValidateToken(tokenString string) (*jwt.Token, error) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
 	secret := os.Getenv("JWT_SECRET")
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Validate the signing method
