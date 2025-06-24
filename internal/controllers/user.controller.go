@@ -104,7 +104,7 @@ func Login(c *gin.Context) {
 		})
 		return 
 	}
-	accessToken, refreshToken, err := helpers.GenerateTokens(user)
+	accessToken, refreshToken, err := helpers.GenerateTokens(foundUser)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{

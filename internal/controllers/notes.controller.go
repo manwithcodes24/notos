@@ -11,12 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	
-	
 )
 
 // collection variables
-
 
 func GetNotes(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
@@ -50,10 +47,7 @@ func GetNoteById(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while finding note"})
 		return
 	}
-
-	c.JSON(200, gin.H{
-		"message": "Get Note by ID working perfectly",
-	})
+	c.JSON(200, Note)
 }
 
 func UploadNotes(c *gin.Context) {

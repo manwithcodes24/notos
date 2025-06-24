@@ -16,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func Authentication() gin.HandlerFunc {
@@ -33,6 +34,7 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		tokenString := authToken[1]
+		log.Println("token : " + tokenString)
 		token, err := helpers.ValidateToken(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, "Invalid Token!")
@@ -63,9 +65,9 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		// check user id
-		userID, ok := claims["id"].(string)
-		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		userID, err := primitive.ObjectIDFromHex(claims["id"].(string))
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token User ID"})
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
@@ -74,7 +76,7 @@ func Authentication() gin.HandlerFunc {
 		defer cancel()
 		err = controllers.UsersCollection.FindOne(ctx, bson.M{"_id": userID}).Decode(&user)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Can't find user. Try again!"})
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
