@@ -5,7 +5,6 @@ import (
 	// "net/http"
 	// "time"
 	"context"
-	"log"
 	"net/http"
 	"notos/internal/controllers"
 	"notos/internal/helpers"
@@ -34,7 +33,6 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		tokenString := authToken[1]
-		log.Println("token : " + tokenString)
 		token, err := helpers.ValidateToken(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, "Invalid Token!")

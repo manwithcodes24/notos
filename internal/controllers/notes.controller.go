@@ -55,6 +55,7 @@ func UploadNotes(c *gin.Context) {
 	defer cancel()
 	var Note models.Note
 	var Subject models.Subject
+	var user models.User
 	if err := c.BindJSON(&Note); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while binding JSON"})
@@ -66,15 +67,19 @@ func UploadNotes(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while validating JSON"})
 		return
 	}
-	err := SubjectsCollection.FindOne(ctx, bson.M{"subjectId": Note.SubjectID}).Decode(&Subject)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while finding subject"})
+	if err := UsersCollection.FindOne(ctx, bson.M{"_id": Note.UserID}).Decode(&user); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error Occured while finding user"})
+		return
+	}
+	log.Println(Note.SubjectID)
+	if err := SubjectsCollection.FindOne(ctx, bson.M{"_id": Note.SubjectID}).Decode(&Subject); err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error Occured while finding subject"})
 		return
 	}
 	Note.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	Note.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	Note.ID = primitive.NewObjectID()
-	_, err = NotesCollection.InsertOne(ctx, Note)
+	_, err := NotesCollection.InsertOne(ctx, Note)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while inserting note"})
@@ -139,13 +144,13 @@ func GetNotesBySubjectId(c *gin.Context) {
 	var subject models.Subject
 	err = SubjectsCollection.FindOne(ctx, bson.M{"_id": subjectId}).Decode(&subject)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while finding subject"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error Occured while finding subject"})
 		return
 	}
 	var notes []models.Note
 	cursor, err := NotesCollection.Find(ctx, bson.M{"subjectId": subjectId})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error Occured while listing notes"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Error Occured while listing notes"})
 		return
 	}
 	err = cursor.All(ctx, &notes)
