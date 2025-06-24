@@ -54,3 +54,8 @@ func ValidateToken(tokenString string) (*jwt.Token, error) {
 		return []byte(secret), nil
 	})
 }
+
+
+func Ptr[T any](v T) *T {
+    return &v
+}

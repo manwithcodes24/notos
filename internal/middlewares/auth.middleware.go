@@ -11,7 +11,6 @@ import (
 	"notos/internal/models"
 	"strings"
 	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"
@@ -79,6 +78,23 @@ func Authentication() gin.HandlerFunc {
 			return
 		}
 		c.Set("user", user)
+		c.Next()
+	}
+}
+
+func AdminAuthentication() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, exists := c.Get("user")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		if *user.(models.User).Role != 1 {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
 		c.Next()
 	}
 }

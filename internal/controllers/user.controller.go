@@ -40,7 +40,7 @@ func Signup(c *gin.Context) {
 	user.Password = HashPassword(user.Password)
 	user.CreatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 	user.UpdatedAt, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-	user.TotalNotes = 0
+	user.TotalNotes = helpers.Ptr(0)
 	if err := validate.Struct(user); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -162,5 +162,84 @@ func GetUserByID(c *gin.Context) {
 	id := c.Param("id")
 	c.JSON(200, gin.H{
 		"message": "Get User by ID working perfectly id: " + id,
+	})
+}
+
+func UpdateUser(c *gin.Context) {
+	userId, err := primitive.ObjectIDFromHex(c.Param("userId"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+	var user models.User
+	if err := c.BindJSON(&user); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to bind user data",
+		})
+		return
+	}
+	filter := bson.M{"_id": userId}
+	input := bson.M{}
+	if user.Name != nil {
+		input["name"] = *user.Name
+	}
+	if user.Email != nil {
+		input["email"] = *user.Email
+	}
+	update := bson.M{"$set": input}
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+	if _, err := UsersCollection.UpdateOne(ctx, filter, update); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error Occured while updating the user. Try again!",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "User updated successfully",
+	})
+}
+
+func DeleteUser(c *gin.Context) {
+	userId, err := primitive.ObjectIDFromHex(c.Param("userId"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid user ID",
+		})
+		return
+	}
+	user, exists := c.Get("user")
+	if !exists {
+		if c.Param("userId") == user.(models.User).ID.Hex() {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Unauthorized",
+			})
+			return
+		}
+	}
+	if c.Param("userId") == user.(models.User).ID.Hex() {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Can't delete the user!",
+		})
+		return
+	}
+	filter := bson.M{"_id": userId}
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
+	defer cancel()
+	if _, err := UsersCollection.DeleteOne(ctx, filter); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Error Occured while deleting the user. Try again!",
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"message": "User deleted successfully",
 	})
 }
