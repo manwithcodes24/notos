@@ -1,9 +1,27 @@
 ---
 import Lamp from "./Lamp.astro";
+import FeatureCard from "./FeatureCard.astro";
+import { features } from "../constants";
 ---
 
-<div class="container-howitworks flex flex-col items-center pt-10 gap-y-2 z-1">
-  <Lamp />
-  <h2 class="text-6xl">The Sacred Ritual</h2>
-  <p class="text-2xl">How It Works</p>
+<div
+  class="relative w-full h-full container-howitworks flex flex-col items-center py-10 gap-y-2 z-1"
+>
+  <div
+    class="absolute bg-section-image inset-0 bg-cover bg-center opacity-45 -z-1"
+  />
+
+  <h2 class="text-8xl font-medium">The Sacred Ritual</h2>
+  <div class="flex flex-row gap-x-14">
+    {
+      features.map((item) => (
+        <FeatureCard title={item.title} desc={item.desc} />
+      ))
+    }
+  </div>
 </div>
+<style>
+  .bg-section-image {
+    background-image: url("/public/assets/images/bg1.png");
+  }
+</style>
