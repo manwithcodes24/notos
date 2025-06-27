@@ -4,3 +4,7 @@
     --color-primary : #7A1BFF;
     --color-secondary : #FFFFFF;
 }
+.logo {
+    font-family: "Inspiration";
+    font-weight: 100;
+  }
