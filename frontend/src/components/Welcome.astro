@@ -2,19 +2,23 @@
 import astroLogo from "../assets/astro.svg";
 import background from "../assets/background.svg";
 import Navbar from "./navbar.astro";
+import BackgroundAnimation from "./animation.astro";
+import HeroSection from "./hero-section.astro";
+import "@fontsource/jaini-purva";
 ---
 
-<div id="container">
+<div class="container text-secondary flex flex-col items-center  w-full h-full">
   <Navbar />
+  <BackgroundAnimation /> 
 </div>
 <style>
-  #container {
+  .container {
     /* center align everything */
-	width: 100%;
-	height: 100%;
-    display: flex;
-	background-color: black;
-    justify-content: center;
-   
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    background-color: black;
+    font-family: "Jaini Purva", system-ui;
   }
 </style>

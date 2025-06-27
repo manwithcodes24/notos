@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@fontsource/inspiration": "^5.2.6",
+    "@fontsource/jaini-purva": "^5.2.6",
     "@tailwindcss/vite": "^4.1.10",
     "astro": "^5.10.1",
     "astro-integration-lottie": "^0.3.2",
